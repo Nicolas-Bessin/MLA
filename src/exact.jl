@@ -16,14 +16,14 @@ function solve_FL(data :: Data; relaxed :: Bool, verbose = false, env = Gurobi.E
     @variable(model, y[1:M] >= 0)
     @variable(model, x[1:N, 1:M] >= 0)
 
-    @constraint(model, [i=1:N], sum(x[i, j] for j in 1:M) == 1)
-    @constraint(model, [i=1:N, j=1:M], x[i, j] <= y[j])
+    @constraint(model, assignment[i=1:N], sum(x[i, j] for j in 1:M) == 1)
+    @constraint(model, validity[i=1:N, j=1:M], x[i, j] <= y[j])
 
     @objective(model, Min,
         sum(data.assignment_costs[i, j] * x[i, j] for i in 1:N, j in 1:M) +
         sum(data.facility_costs[j] * y[j] for j in 1:M)
     )
-    
+
     if !relaxed
         set_binary.(y)
     end
@@ -41,5 +41,9 @@ function solve_FL(data :: Data; relaxed :: Bool, verbose = false, env = Gurobi.E
         println("Assignment share of total cost: ", round(assignment_share * 100, digits=2), "%")
     end
 
-    return objective, value.(y), value.(x)
+    if relaxed
+        return objective, value.(y), value.(x), dual.(assignment), dual.(validity)
+    else
+        return objective, value.(y), value.(x)
+    end
 end

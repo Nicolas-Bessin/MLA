@@ -2,11 +2,11 @@ include("data.jl")
 include("exact.jl")
 
 
-function rounding_heuristic(data :: Data; verbose = false, eps = 1e-6)
+function rounding_heuristic(data :: Data; verbose = false, eps = 1e-6, env = Gurobi.Env())
     N = data.N
     M = data.M
     # Begin by solving the relaxation
-    obj, y, x, v, w = solve_FL(data, relaxed = true)
+    obj, y, x, v, w = solve_FL(data, relaxed = true, env = env)
 
     unassigned_clients = Set(1:N)
     cluster_affectations = ones(Int, N)
@@ -68,8 +68,8 @@ function rounding_heuristic(data :: Data; verbose = false, eps = 1e-6)
 
 end
 
-data = random_data(50, 25, seed = 143);
+# data = random_data(50, 25, seed = 143);
 
-cost_heur, sites, cluster_affectations = rounding_heuristic(data, verbose = false)
+# cost_heur, sites, cluster_affectations = rounding_heuristic(data, verbose = false)
 
-cost_exact, y, x = solve_FL(data, relaxed = false)
+# cost_exact, y, x = solve_FL(data, relaxed = false)

@@ -13,6 +13,7 @@ The following table give the results obtained on a few instances. We selected in
 
 - On the instances where the integrality gap is zero, the rounding heuristic is optimal as expected.
 - However, despite the fact that the primal-dual heuristic is a 3-approximation, in reality it performs much worse than the rounding heuristic (which is a 4-approximation).
+
 | Instance | N | M | Relaxed obj | Integer obj | Integrality Gap | Rounding heuristic | Primal-Dual Heuristic |
 | :----: | -: | -: | -: | -: | -: | -: | -: |
 | 1 | 25 | 10 | 1498.5 | 1500 | 1.5 | 1515 | 1510 |

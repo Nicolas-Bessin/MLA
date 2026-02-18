@@ -74,7 +74,8 @@ The following two plots, generated from the data in the table above, show the av
 
 - We clearly see that while the primal-dual heuristic performs much worse in terms of solution quality, it is much faster, because it does not require a costly computation of the LP relaxation of the problem.
 - In fact for the three methods that require computing the LP relaxation (relaxation itself, exact resolution and rounding heuristic),
-their run time is almost the same, meaning that the time taken by the heuristics themselves (or the B&B) is negligible compared to the time taken by the LP relaxation, which is the same for all three methods.
+their run time is almost the same, meaning that the time taken by the heuristics themselves (or the B&B) is negligible compared to the time taken by the LP relaxation, which is the same for all three methods.  
+
 ![Average run time](plots/average_run_time.png)
 ![Average gap](plots/average_gap.png)
 

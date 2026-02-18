@@ -42,7 +42,7 @@ function rounding_heuristic(data :: Data; verbose = false, eps = 1e-6, env = Gur
     end
 
     # Finally, choose the sites
-    sites = []
+    sites :: Vector{Int} = []
     for cluster in 1:k
         min_site = argmin(
             site -> data.facility_costs[site], [site for site in 1:M if x[cluster_centers[cluster], site] > eps]
@@ -64,7 +64,7 @@ function rounding_heuristic(data :: Data; verbose = false, eps = 1e-6, env = Gur
     if verbose
         println("Rounding found a solution with objective $cost")
     end
-    return cost, sites, cluster_affectations
+    return cost, sites, site_affectations
 
 end
 

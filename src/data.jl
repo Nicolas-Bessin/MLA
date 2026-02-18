@@ -3,6 +3,15 @@ struct Data
     M :: Int
     assignment_costs :: Matrix{Int}
     facility_costs :: Vector{Int}
+    client_points :: Matrix{Int}
+    facility_points :: Matrix{Int}
+end
+
+# Define a constructor where the points are unknown
+function Data(N::Int, M::Int, assignment_costs::Matrix{Int}, facility_costs::Vector{Int})
+    client_points = zeros(Int, N, 2)
+    facility_points = zeros(Int, M, 2)
+    return Data(N, M, assignment_costs, facility_costs, client_points, facility_points)
 end
 
 using Random
@@ -17,5 +26,5 @@ function random_data(N::Int, M::Int; seed :: Int = 42) :: Data
     facility_points = rand(0:250, M, 2)
     assignment_costs = [l1_norm(client_point[i, :], facility_points[j, :]) for i in 1:N, j in 1:M]
     facility_costs = rand(25:50, M)
-    return Data(N, M, assignment_costs, facility_costs)
+    return Data(N, M, assignment_costs, facility_costs, client_point, facility_points)
 end

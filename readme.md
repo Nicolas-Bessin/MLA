@@ -47,4 +47,10 @@ The following table give the results obtained on a few instances. We selected in
 | 29 | 50 | 25 | 2471.0 | 2471 | 0.0 | 2471 | 2535 |
 | 30 | 50 | 25 | 2289.0 | 2289 | 0.0 | 2289 | 2386 |
 
+# Plots 
 
+We focus on a specific instance (Instance 13 in the table above) to show the solutions obtained by the exact method, the rounding heuristic and the primal-dual heuristic.
+
+![Exact solution](plots/Exact.png)
+![Rounding solution](plots/Rounding.png)
+![Primal-Dual solution](plots/Primal-Dual.png)

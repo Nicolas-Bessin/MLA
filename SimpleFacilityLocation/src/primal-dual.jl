@@ -14,6 +14,27 @@ function primal_dual_heuristic(data :: Data; verbose :: Bool = false)
     v = zeros(Int, N)
     w = zeros(Int, N, M)
 
+    # Check event 1 for client i
+    function check_event_1(i :: Int)
+        candidates_sites = findall(j -> (v[i] == data.assignment_costs[i, j] && open_sites[j]), 1:M)
+        if length(candidates_sites) > 0
+            client_affectations[i] = candidates_sites[1]
+            delete!(unassigned_clients, i)
+        end
+    end
+
+    # Check event 3 for site j
+    function check_event_3(j :: Int)
+        if sum(w[i, j] for i in 1:N) == data.facility_costs[j]
+            open_sites[j] = true
+            for i in unassigned_clients
+                if v[i] >= data.assignment_costs[i, j]
+                    client_affectations[i] = j
+                    delete!(unassigned_clients, i)
+                end
+            end
+        end
+    end
     # PHASE 1
 
     iter = 1
@@ -21,44 +42,27 @@ function primal_dual_heuristic(data :: Data; verbose :: Bool = false)
         if verbose
             println("Iteration $iter, unassigned clients: $(length(unassigned_clients))")
         end
-        # Event 1 
-        for i in unassigned_clients
-            candidates_sites = findall(j -> (v[i] >= data.assignment_costs[i, j] && open_sites[j]), 1:M)
-            if length(candidates_sites) > 0
-                client_affectations[i] = candidates_sites[1]
-                delete!(unassigned_clients, i)
-            end
-        end
+        # # Event 1 
+        # for i in unassigned_clients
+        #     check_event_1(i)
+        # end
 
-        # Event 3
-        for j in 1:M
-            if sum(w[i, j] for i in 1:N) >= data.facility_costs[j]
-                open_sites[j] = true
-                for i in unassigned_clients
-                    if v[i] >= data.assignment_costs[i, j]
-                        client_affectations[i] = j
-                        delete!(unassigned_clients, i)
-                    end
-                end
-            end
-        end
+        # # Event 3
+        # for j in 1:M
+        #     check_event_3(j)
+        # end
 
         # Augment the dual values
         for i in unassigned_clients
             v[i] += 1
             for j in 1:M
                 w[i, j] = max(0, v[i] - data.assignment_costs[i, j])
+                check_event_3(j)
             end
+            check_event_1(i)
         end
 
         iter += 1
-
-        # Verify the complementary slackness conditions
-        for i in 1:N
-            for j in 1:M
-                @assert w[i, j] == max(0, v[i] - data.assignment_costs[i, j])
-            end
-        end
     end
 
     # PHASE 2 - Remove some of the opened sites by finding a maximal independent set
@@ -108,7 +112,10 @@ function primal_dual_heuristic(data :: Data; verbose :: Bool = false)
         println("Primal-dual heuristic found a solution with objective $cost in $iter iterations")
     end
 
-    return cost, [j for j in 1:M if open_sites[j]], client_affectations
+    # Compute the dual cost
+    dual_cost = sum(v)
+
+    return cost, dual_cost, [j for j in 1:M if open_sites[j]], client_affectations
 end
 
 # data = random_data(50, 25, seed = 143);
